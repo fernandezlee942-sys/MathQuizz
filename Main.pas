@@ -25,6 +25,30 @@ var
 
 
 // its for the ascii dont use crt for whtever reasons
+function GetHighScore(const targetUser: string): integer;
+var
+  f: text;
+  line, u: string;
+  s, posi, high: integer;
+begin
+  high := 0;
+  assign(f, DATASCORE);
+  reset(f);
+  while not eof(f) do
+  begin
+    readln(f, line);
+    posi := pos(',', line);
+    u := copy(line, 1, posi - 1);
+    s := StrToInt(copy(line, posi + 1, length(line)));
+
+    if u = targetUser then
+      if s > high then
+        high := s;
+  end;
+  close(f);
+  GetHighScore := high;
+end;
+
 
 procedure ClearScreen;
 var i: integer;
@@ -116,10 +140,14 @@ procedure SaveScore;
 var f: text;
 begin
   assign(f, DATASCORE);
-  append(f);
-  writeln(f, user.username, ' skor=', skor);
+  if FileExists(DATASCORE) then
+    append(f)
+  else
+    rewrite(f);
+  writeln(f, user.username, ',', skor);
   close(f);
 end;
+
 
 procedure PlayQuiz;
 var i, pilih: integer;
@@ -174,7 +202,8 @@ begin
     writeln('Mantap! Kamu jago matematika!')
   else
     writeln('Ayo latihan lagi ya!');
-
+    
+    writeln('High score: ', GetHighScore(user.username));
   writeln;
   writeln('Tekan ENTER untuk keluar...');
   readln;

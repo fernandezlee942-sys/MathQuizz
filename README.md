@@ -24,11 +24,12 @@ Link Youtube : (???) (prolly link github??)
 
  <!-- Hapus yg dibawah komentar ini setelah program selesai -->
 
+Target commit : 10-3: 7
+
 Deadline : Rabu, 17 Desember 2024 pukul 20.00 WIB
 
 (fitur potensial dikerjain sesuai sikon aj g wajib ad semuanya)
 fitur potensial :
-1 Ascii art (klo g pke crt, i doubt we dont use it thou) ( gmpg )
 
 2 Windows popup dengan library windows
 
@@ -48,13 +49,16 @@ fitur potensial :
 
 11 Sistem hint ( menghapus salah 1 pilihan yang salah )
 
+
 finished:
+1 Ascii art (Fernandez dh siap)
 9 Sistem nyawa (Houra dh siap)
 
 (target commit minial 9 kali)
 1 initial commmit
 8 commit fitur (bisa lebih tergantung sikon)
 1 commit buat perbaikan tampilan atau fitur yg terasa masih kurang
+
 
 
 Syarat Program:
