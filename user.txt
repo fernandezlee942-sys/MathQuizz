@@ -1,5 +1,2 @@
-f,1
+ferfer,ganteng
 fer,23
-fer,23
-f,21
-fer,34

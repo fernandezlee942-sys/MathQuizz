@@ -1,4 +1,2 @@
 fer,50
-fer,30
-f,50
-fer,20
+ferfer,40

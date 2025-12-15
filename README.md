@@ -24,7 +24,7 @@ Link Youtube : (???) (prolly link github??)
 
  <!-- Hapus yg dibawah komentar ini setelah program selesai -->
 
-Target commit : 10-3: 7
+Target commit : 10-6: 4
 
 Deadline : Rabu, 17 Desember 2024 pukul 20.00 WIB
 
@@ -39,10 +39,6 @@ fitur potensial :
 
 5 Random generated question and answer
 
-6 Fitur login - sign up ( sbg user atau pembuat soal, nnti simpan di file txt ) ( klo g slh sistem login agak capek, liat sikon + deadline )
-
-7 Fitur penyimpanan skor dan user di file txt
-
 8 Tingkat kesulitan menyesuaikan jumlah benar berurutan
 
 10 Warna untuk teks soal dan pilihan
@@ -52,6 +48,8 @@ fitur potensial :
 
 finished:
 1 Ascii art (Fernandez dh siap)
+6 Fitur login - sign up (Houra siap)
+7 Fitur penyimpanan skor dan user di file txt (Fernandez & Houra siap)
 9 Sistem nyawa (Houra dh siap)
 
 (target commit minial 9 kali)

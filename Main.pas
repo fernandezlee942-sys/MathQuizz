@@ -109,7 +109,6 @@ begin
     scores[i].score := s;
   end;
   close(f);
-  // Urutkan skor descending (bubble sort sederhana)
   for i := 0 to length(scores) - 2 do
     for j := i + 1 to length(scores) - 1 do
       if scores[i].score < scores[j].score then
@@ -118,10 +117,10 @@ begin
         scores[i] := scores[j];
         scores[j] := temp;
       end;
-  // Tampilkan top 5
   writeln('===== Top 5 Global Scores =====');
+//dynamic array starts from 0
   for i := 0 to 4 do
-  begin
+  begin 
     if i < length(scores) then
       writeln(i+1, '. ', scores[i].username, ' : ', scores[i].score)
     else
@@ -191,43 +190,71 @@ begin
   close(f);
 end;
 
-procedure LoadQuestion;
+procedure GenerateRandomQuestion(var Q: TQuestion);
+var
+  a, b, hasil, i, val, range, op, pos: integer;
+  used: array[1..4] of boolean;
 begin
-  questions[1].soal := '6 x 7 = ?';
-  questions[1].pilihan[1] := '42';
-  questions[1].pilihan[2] := '36';
-  questions[1].pilihan[3] := '48';
-  questions[1].pilihan[4] := '40';
-  questions[1].jawaban := 1;
+  op := Random(3) + 1;
+  for i := 1 to 4 do used[i] := false;
 
-  questions[2].soal := '81 : 9 = ?';
-  questions[2].pilihan[1] := '7';
-  questions[2].pilihan[2] := '8';
-  questions[2].pilihan[3] := '9';
-  questions[2].pilihan[4] := '10';
-  questions[2].jawaban := 3;
+  case op of
+    1: begin
+      a := Random(99) + 1;
+      b := Random(99) + 1;
+      if Random(2) = 0 then a := -a;
+      if Random(2) = 0 then b := -b;
+      hasil := a + b;
+      range := 4;
+      Q.soal := IntToStr(a) + ' + ' + IntToStr(b) + ' = ?';
+    end;
+    2: begin
+      a := Random(33) + 1;
+      b := Random(33) + 1;
+      if Random(2) = 0 then a := -a;
+      if Random(2) = 0 then b := -b;
+      hasil := a * b;
+      range := 24;
+      Q.soal := IntToStr(a) + ' x ' + IntToStr(b) + ' = ?';
+    end;
+    3: begin
+      b := Random(12) + 1;
+      hasil := Random(21) - 10;
+      a := hasil * b;
+      range := 3;
+      Q.soal := IntToStr(a) + ' : ' + IntToStr(b) + ' = ?';
+    end;
+  end;
 
-  questions[3].soal := '12 x 5 = ?';
-  questions[3].pilihan[1] := '50';
-  questions[3].pilihan[2] := '55';
-  questions[3].pilihan[3] := '60';
-  questions[3].pilihan[4] := '65';
-  questions[3].jawaban := 3;
+  pos := Random(4) + 1;
+  Q.jawaban := pos;
+  Q.pilihan[pos] := IntToStr(hasil);
+  used[pos] := true;
 
-  questions[4].soal := '64 : 8 = ?';
-  questions[4].pilihan[1] := '6';
-  questions[4].pilihan[2] := '7';
-  questions[4].pilihan[3] := '8';
-  questions[4].pilihan[4] := '9';
-  questions[4].jawaban := 3;
-
-  questions[5].soal := '9 x 8 = ?';
-  questions[5].pilihan[1] := '64';
-  questions[5].pilihan[2] := '72';
-  questions[5].pilihan[3] := '81';
-  questions[5].pilihan[4] := '70';
-  questions[5].jawaban := 2;
+  for i := 1 to 4 do
+  begin
+    if not used[i] then
+    begin
+      repeat
+        val := hasil + (Random(range * 2 + 1) - range);
+        if op <> 3 then
+          if (val mod 2) <> (hasil mod 2) then
+            continue;
+      until val <> hasil;
+      Q.pilihan[i] := IntToStr(val);
+      used[i] := true;
+    end;
+  end;
 end;
+
+
+procedure LoadQuestion;
+var i: integer;
+begin
+  for i := 1 to MAXQ do
+    GenerateRandomQuestion(questions[i]);
+end;
+
 
 procedure SaveScore;
 var f: text;
@@ -247,7 +274,7 @@ var i, pilih: integer;
 begin
   skor := 0;
   nyawa := 3;
-
+  Randomize;
   LoadQuestion;
 
   for i := 1 to MAXQ do
