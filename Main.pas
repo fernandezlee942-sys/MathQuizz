@@ -23,8 +23,32 @@ var
   skor, nyawa: integer;
   menu: char;
 
+function UsernameExists(const name: string): boolean;
+var
+  f: text;
+  line, u: string;
+  posi: integer;
+begin
+  UsernameExists := false;
+  if not FileExists(DATAUSER) then exit;
+  assign(f, DATAUSER);
+  reset(f);
+  while not eof(f) do
+  begin
+    readln(f, line);
+    posi := pos(',', line);
+    if posi = 0 then continue;
+    u := copy(line, 1, posi - 1);
+    if u = name then
+    begin
+      UsernameExists := true;
+      break;
+    end;
+  end;
+  close(f);
+end;
 
-// its for the ascii dont use crt for whtever reasons
+
 function GetHighScore(const targetUser: string): integer;
 var
   f: text;
@@ -50,6 +74,7 @@ begin
 end;
 
 
+// its for the ascii dont use crt for whtever reasons
 procedure ClearScreen;
 var i: integer;
 begin
@@ -60,16 +85,26 @@ end;
 procedure SignUp;
 var f: text;
 begin
+  write('Username baru : ');
+  readln(user.username);
+  if UsernameExists(user.username) then
+  begin
+    writeln('Username sudah ada!');
+    writeln('Tekan ENTER...');
+    readln;
+    exit;
+  end;
+  write('Password baru : ');
+  readln(user.password);
   assign(f, DATAUSER);
   append(f);
-  write('Username baru : '); readln(user.username);
-  write('Password baru : '); readln(user.password);
   writeln(f, user.username, ',', user.password);
   close(f);
   writeln('Sign up berhasil!');
   writeln('Tekan ENTER...');
   readln;
 end;
+
 
 function Login: boolean;
 var
