@@ -1,5 +1,5 @@
 program MathQuiz;
-uses crt, sysutils;
+uses sysutils,asciiart;
 
 const
   MAXQ = 5;
@@ -23,13 +23,15 @@ var
   skor, nyawa: integer;
   menu: char;
 
-procedure AsciiArt;
+
+// its for the ascii dont use crt for whtever reasons
+
+procedure ClearScreen;
+var i: integer;
 begin
-  clrscr;
-  writeln('==============================');
-  writeln('      MATH QUIZ PASCAL');
-  writeln('==============================');
+  for i := 1 to 50 do writeln;
 end;
+
 
 procedure SignUp;
 var f: text;
@@ -129,7 +131,7 @@ begin
 
   for i := 1 to MAXQ do
   begin
-    clrscr;
+    ClearScreen;
     writeln('Soal ', i, ' dari ', MAXQ);
     writeln('Nyawa: ', nyawa, ' | Skor: ', skor);
     writeln;
@@ -159,7 +161,7 @@ begin
 
   SaveScore;
 
-  clrscr;
+  ClearScreen;
   writeln('================================');
   writeln('        KUIS TELAH SELESAI       ');
   writeln('================================');
@@ -187,7 +189,7 @@ begin
   end;
 
   repeat
-    AsciiArt;
+    ShowAscii(1);
     writeln('1. Login');
     writeln('2. Sign Up');
     writeln('3. Keluar');
@@ -197,7 +199,7 @@ begin
     case menu of
   '1': if Login then PlayQuiz else begin writeln('Login gagal'); readln; end;
   '2': SignUp;
-  '3': write('  TERIMA KASIH TELAH BERMAIN-!');
+  '3': ShowAscii(2);
   
     end;
   until menu = '3';

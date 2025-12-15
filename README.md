@@ -29,18 +29,27 @@ Deadline : Rabu, 17 Desember 2024 pukul 20.00 WIB
 (fitur potensial dikerjain sesuai sikon aj g wajib ad semuanya)
 fitur potensial :
 1 Ascii art (klo g pke crt, i doubt we dont use it thou) ( gmpg )
+
 2 Windows popup dengan library windows
+
 3 Timer based scoring
+
 4 Navigasi pilihan jawaban dgn wasd (bs pke crt, atau sysutils tergantung kemauman)
+
 5 Random generated question and answer
+
 6 Fitur login - sign up ( sbg user atau pembuat soal, nnti simpan di file txt ) ( klo g slh sistem login agak capek, liat sikon + deadline )
+
 7 Fitur penyimpanan skor dan user di file txt
+
 8 Tingkat kesulitan menyesuaikan jumlah benar berurutan
-9 Sistem nyawa
+
 10 Warna untuk teks soal dan pilihan
+
 11 Sistem hint ( menghapus salah 1 pilihan yang salah )
 
-
+finished:
+9 Sistem nyawa (Houra dh siap)
 
 (target commit minial 9 kali)
 1 initial commmit
