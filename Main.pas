@@ -48,7 +48,6 @@ begin
   close(f);
 end;
 
-
 function GetHighScore(const targetUser: string): integer;
 var
   f: text;
@@ -71,6 +70,65 @@ begin
   end;
   close(f);
   GetHighScore := high;
+end;
+
+type
+  TScoreRecord = record
+    username: string;
+    score: integer;
+  end;
+
+procedure ShowTop5Scores;
+var
+  f: text;
+  line, u, sstr: string;
+  posi, s, i, j: integer;
+  scores: array of TScoreRecord;
+  temp: TScoreRecord;
+begin
+  if not FileExists(DATASCORE) then
+  begin
+    writeln('Belum ada skor tersimpan.');
+    exit;
+  end;
+  // Baca semua skor
+  SetLength(scores, 0);
+  assign(f, DATASCORE);
+  reset(f);
+  while not eof(f) do
+  begin
+    readln(f, line);
+    posi := pos(',', line);
+    if posi = 0 then continue;
+    u := copy(line, 1, posi - 1);
+    sstr := copy(line, posi + 1, length(line));
+    s := StrToIntDef(sstr, 0);
+    i := length(scores);
+    SetLength(scores, i + 1);
+    scores[i].username := u;
+    scores[i].score := s;
+  end;
+  close(f);
+  // Urutkan skor descending (bubble sort sederhana)
+  for i := 0 to length(scores) - 2 do
+    for j := i + 1 to length(scores) - 1 do
+      if scores[i].score < scores[j].score then
+      begin
+        temp := scores[i];
+        scores[i] := scores[j];
+        scores[j] := temp;
+      end;
+  // Tampilkan top 5
+  writeln('===== Top 5 Global Scores =====');
+  for i := 0 to 4 do
+  begin
+    if i < length(scores) then
+      writeln(i+1, '. ', scores[i].username, ' : ', scores[i].score)
+    else
+      writeln(i+1, '. - : 0');
+  end;
+  writeln('===============================');
+  writeln;
 end;
 
 
@@ -256,15 +314,17 @@ begin
     ShowAscii(1);
     writeln('1. Login');
     writeln('2. Sign Up');
-    writeln('3. Keluar');
+    writeln('3. Show Highscore Board');
+    writeln('4. Keluar');
     write('Pilih: ');
     readln(menu);
 
     case menu of
   '1': if Login then PlayQuiz else begin writeln('Login gagal'); readln; end;
   '2': SignUp;
-  '3': ShowAscii(2);
+  '3': ShowTop5Scores;
+  '4': ShowAscii(2);
   
     end;
-  until menu = '3';
+  until menu = '4';
 end.
