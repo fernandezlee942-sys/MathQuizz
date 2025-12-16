@@ -357,7 +357,7 @@ procedure PlayQuiz;
 var i, pilih: integer;
 begin
   skor := 0;
-  nyawa := 3;
+  nyawa := 5;
   Randomize;
   LoadQuestion;
 
