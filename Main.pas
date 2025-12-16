@@ -138,7 +138,8 @@ var
     ResetColor;
     writeln(' =====');
   
-  //dynamic array starts from 0
+    //dynamic array starts from 0
+
     for i := 0 to 4 do
       begin 
         if i < length(scores) then
@@ -438,7 +439,7 @@ var
       end;
 
     SaveScore;
-    
+
     ClearScreen;
     SetYellow;
     writeln('================================');

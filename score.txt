@@ -18,3 +18,4 @@ ferfer,30
 ferfer,20
 ferfer,0
 akucintachitoge,10
+ferfer,60
