@@ -1,5 +1,5 @@
 program MathQuiz;
-uses sysutils,asciiart;
+uses sysutils,asciiart,colortext;
 
 const
   MAXQ = 5;
@@ -22,6 +22,14 @@ var
   questions: array[1..MAXQ] of TQuestion;
   skor, nyawa: integer;
   menu: char;
+
+// its for the ascii dont use crt for whtever reasons
+procedure ClearScreen;
+begin
+  write(#27'[2J');  // clear visible screen
+  write(#27'[3J');  // clear scrollback (important)
+  write(#27'[H');   // cursor to top-left
+end;
 
 function UsernameExists(const name: string): boolean;
 var
@@ -117,49 +125,82 @@ begin
         scores[i] := scores[j];
         scores[j] := temp;
       end;
-  writeln('===== Top 5 Global Scores =====');
+  write('===== ');
+  SetBlue;
+  write('Top 5 Global Scores');
+  ResetColor;
+  writeln(' =====');
 //dynamic array starts from 0
   for i := 0 to 4 do
   begin 
     if i < length(scores) then
-      writeln(i+1, '. ', scores[i].username, ' : ', scores[i].score)
+      begin
+        SetRed;
+        write(i+1);
+        ResetColor;
+        write( '. ');
+        SetBlue;
+        write(scores[i].username); 
+        ResetColor;
+        write(' : ');
+        SetMagenta;
+        writeln(scores[i].score);
+        ResetColor;
+      end
     else
       writeln(i+1, '. - : 0');
   end;
   writeln('===============================');
-  writeln;
+  write('Tekan ');
+  SetGreen;
+  write('ENTER ');
+  ResetColor;
+  writeln('Untuk Kembali ke Menu Utama');
+  readln();
+  ClearScreen;
 end;
 
 
-// its for the ascii dont use crt for whtever reasons
-procedure ClearScreen;
-var i: integer;
-begin
-  for i := 1 to 50 do writeln;
-end;
 
 
 procedure SignUp;
 var f: text;
 begin
+  SetCyan;
   write('Username baru : ');
+  SetYellow;
   readln(user.username);
   if UsernameExists(user.username) then
   begin
     writeln('Username sudah ada!');
-    writeln('Tekan ENTER...');
+    write('Tekan ');
+    SetGreen;
+    write('ENTER');
+    SetYellow;
+    writeln(' untuk kembali ke menu utama');
+    ResetColor;
     readln;
+    ClearScreen;
     exit;
   end;
+  SetCyan;
   write('Password baru : ');
+  SetYellow;
   readln(user.password);
+  ResetColor;
   assign(f, DATAUSER);
   append(f);
   writeln(f, user.username, ',', user.password);
   close(f);
   writeln('Sign up berhasil!');
-  writeln('Tekan ENTER...');
+  write('Tekan ');
+  SetGreen;
+  write('ENTER');
+  SetYellow;
+  writeln(' untuk kembali ke menu utama');
+  ResetColor;
   readln;
+  ClearScreen;
 end;
 
 
@@ -168,10 +209,29 @@ var
   f: text;
   line, u, p: string;
   posi: integer;
+
 begin
   Login := false;
-  write('Username : '); readln(user.username);
-  write('Password : '); readln(user.password);
+
+  SetCyan;
+  write('Username : ');
+  SetYellow;
+  readln(user.username);
+
+  // check if username exists first
+  if not UsernameExists(user.username) then
+  begin
+    SetRed;
+    writeln('Username belum terdaftar!');
+    ResetColor;
+    exit;
+  end;
+
+  SetCyan;
+  write('Password : ');
+  SetYellow;
+  readln(user.password);
+  ResetColor;
 
   assign(f, DATAUSER);
   reset(f);
@@ -181,14 +241,25 @@ begin
     posi := pos(',', line);
     u := copy(line, 1, posi - 1);
     p := copy(line, posi + 1, length(line));
-    if (u = user.username) and (p = user.password) then
+
+    if u = user.username then
     begin
-      Login := true;
+      if p = user.password then
+        Login := true;
       break;
     end;
   end;
   close(f);
+
+  if not Login then
+  begin
+    SetRed;
+    writeln('Password salah!');
+    ResetColor;
+    exit;
+  end;
 end;
+
 
 procedure GenerateRandomQuestion(var Q: TQuestion);
 var
@@ -196,7 +267,8 @@ var
   used: array[1..4] of boolean;
 begin
   op := Random(3) + 1;
-  for i := 1 to 4 do used[i] := false;
+  for i := 1 to 4 do
+    used[i] := false;
 
   case op of
     1: begin
@@ -237,10 +309,22 @@ begin
     begin
       repeat
         val := hasil + (Random(range * 2 + 1) - range);
+        // same parity for + and ×
         if op <> 3 then
-          if (val mod 2) <> (hasil mod 2) then
+          if Odd(val) <> Odd(hasil) then
             continue;
-      until val <> hasil;
+        // not equal to correct answer
+        if val = hasil then
+          continue;
+        // prevent duplicate choices
+        if ( (used[1] and (Q.pilihan[1] = IntToStr(val))) or
+             (used[2] and (Q.pilihan[2] = IntToStr(val))) or
+             (used[3] and (Q.pilihan[3] = IntToStr(val))) or
+             (used[4] and (Q.pilihan[4] = IntToStr(val))) ) then
+          continue;
+        break;
+      until false;
+
       Q.pilihan[i] := IntToStr(val);
       used[i] := true;
     end;
@@ -280,53 +364,103 @@ begin
   for i := 1 to MAXQ do
   begin
     ClearScreen;
+    SetGreen;
     writeln('Soal ', i, ' dari ', MAXQ);
+    SetCyan;
     writeln('Nyawa: ', nyawa, ' | Skor: ', skor);
     writeln;
+    SetRed;
     writeln(questions[i].soal);
-    writeln('1. ', questions[i].pilihan[1]);
-    writeln('2. ', questions[i].pilihan[2]);
-    writeln('3. ', questions[i].pilihan[3]);
-    writeln('4. ', questions[i].pilihan[4]);
+    SetMagenta;
+    write('1. ');
+    SetBlue;
+    writeln( questions[i].pilihan[1]);
+    SetMagenta;
+    write('2. ');
+    SetBlue;
+    writeln(questions[i].pilihan[2]);
+    SetMagenta;
+    write('3. ');
+    SetBlue;
+    writeln(questions[i].pilihan[3]);
+    SetMagenta;
+    write('4. ');
+    SetBlue;
+    writeln(questions[i].pilihan[4]);
+    ResetColor;
     write('Jawaban (1-4): ');
+    SetMagenta;
     readln(pilih);
+    ResetColor;
 
     if pilih = questions[i].jawaban then
     begin
+      SetGreen;
       writeln('Benar!');
+      ResetColor;
       skor := skor + 10;
     end
     else
     begin
+      SetRed;
       writeln('Salah!');
+      ResetColor;
       nyawa := nyawa - 1;
     end;
 
-    if nyawa = 0 then break;
-    writeln('Tekan ENTER...');
+    if nyawa = 0 then 
+      break;
+    SetYellow;
+    write('Tekan ');
+    SetGreen;
+    write('ENTER');
+    SetYellow;
+    writeln(' Untuk Lanjut');
+    ResetColor;
     readln;
+
   end;
 
   SaveScore;
 
   ClearScreen;
+  SetYellow;
   writeln('================================');
   writeln('        KUIS TELAH SELESAI       ');
   writeln('================================');
   writeln;
-  writeln('Terima kasih, ', user.username);
-  writeln('Skor akhir kamu : ', skor);
+  ResetColor;
+  write('Terima kasih, ');
+  SetYellow;
+  writeln(user.username);
+  ResetColor;
+  write('Skor akhir kamu : ');
+  SetYellow;
+  writeln(skor);
   writeln;
 
   if skor >= 40 then
     writeln('Mantap! Kamu jago matematika!')
   else
+    begin
+    SetYellow;
     writeln('Ayo latihan lagi ya!');
-    
-    writeln('High score: ', GetHighScore(user.username));
+    end;
+  ResetColor;
+  write('High Score : ');
+  SetBlue;
+  write(GetHighScore(user.username));
+  ResetColor;
   writeln;
-  writeln('Tekan ENTER untuk keluar...');
+  SetYellow;
+  write('Tekan ');
+  SetGreen;
+  write('Enter');
+  SetYellow;
+  writeln(' untuk keluar...');
+  ResetColor;
   readln;
+  ClearScreen;
 end;
 
 begin
@@ -338,20 +472,52 @@ begin
   end;
 
   repeat
+    ClearScreen;
     ShowAscii(1);
-    writeln('1. Login');
-    writeln('2. Sign Up');
-    writeln('3. Show Highscore Board');
-    writeln('4. Keluar');
-    write('Pilih: ');
+    SetBlue;
+    write('1. ');
+    SetYellow;
+    writeln ('Login');
+    SetBlue;
+    write('2. ');
+    SetYellow;
+    writeln('Sign Up');
+    SetBlue;
+    write('3. ');
+    SetYellow;
+    writeln('Show Highscore Board');
+    SetBlue;
+    write('4. ');
+    SetYellow;
+    writeln('Keluar');
+    ResetColor;
+    write('Pilih : ');
+    SetBlue;
     readln(menu);
+    writeln();
+    ResetColor;
 
-    case menu of
-  '1': if Login then PlayQuiz else begin writeln('Login gagal'); readln; end;
-  '2': SignUp;
-  '3': ShowTop5Scores;
-  '4': ShowAscii(2);
-  
-    end;
+      case menu of
+      '1': if Login then
+              PlayQuiz 
+           else
+              begin
+                writeln('Login gagal');
+                write('Tekan ');
+                SetGreen;
+                write('ENTER');
+                SetYellow;
+                writeln(' untuk kembali ke menu utama');
+                ResetColor;
+                readln;
+                ClearScreen;
+              end;
+      '2': SignUp;
+      '3': ShowTop5Scores;
+      '4': begin
+            ClearScreen;
+            ShowAscii(2);
+           end;
+      end;
   until menu = '4';
 end.

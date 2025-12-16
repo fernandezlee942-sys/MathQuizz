@@ -31,26 +31,21 @@ Deadline : Rabu, 17 Desember 2024 pukul 20.00 WIB
 (fitur potensial dikerjain sesuai sikon aj g wajib ad semuanya)
 fitur potensial :
 
-2 Windows popup dengan library windows
+ Timer based scoring
 
-3 Timer based scoring
+ Tingkat kesulitan menyesuaikan jumlah benar berurutan
 
-4 Navigasi pilihan jawaban dgn wasd (bs pke crt, atau sysutils tergantung kemauman)
+ Warna untuk teks soal dan pilihan
 
-5 Random generated question and answer
-
-8 Tingkat kesulitan menyesuaikan jumlah benar berurutan
-
-10 Warna untuk teks soal dan pilihan
-
-11 Sistem hint ( menghapus salah 1 pilihan yang salah )
+ Sistem hint ( menghapus salah 1 pilihan yang salah )
 
 
 finished:
-1 Ascii art (Fernandez dh siap)
-6 Fitur login - sign up (Houra siap)
-7 Fitur penyimpanan skor dan user di file txt (Fernandez & Houra siap)
-9 Sistem nyawa (Houra dh siap)
+ Ascii art (Fernandez dh siap)
+ Fitur login - sign up (Houra siap)
+ Fitur penyimpanan skor dan user di file txt (Fernandez & Houra siap)
+ Sistem nyawa (Houra dh siap)
+ Random generated question and answer (Fernandez dh siap)
 
 (target commit minial 9 kali)
 1 initial commmit
