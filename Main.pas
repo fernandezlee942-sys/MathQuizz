@@ -102,6 +102,12 @@ var
     if not FileExists(DATASCORE) then
       begin
         writeln('Belum ada skor tersimpan.');
+        write('Tekan ');
+        SetGreen;
+        write('ENTER ');
+        ResetColor;
+        writeln('Untuk Kembali ke Menu Utama');
+        readln();
         exit;
       end;
     // Baca semua skor
