@@ -2,7 +2,7 @@ program MathQuiz;
 uses sysutils,asciiart,colortext;
 
 const
-  MAXQ = 5;
+  MAXQ = 10;
   DATAUSER = 'user.txt';
   DATASCORE = 'score.txt';
 
