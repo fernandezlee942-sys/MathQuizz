@@ -205,6 +205,7 @@ var
     ResetColor;
     assign(f, DATAUSER);
     append(f);
+    // buat pindah ke plg bawah file txt
     writeln(f, user.username, ',', user.password);
     close(f);
     writeln('Sign up berhasil!');
