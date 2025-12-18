@@ -17,11 +17,17 @@ type
     jawaban: integer;
     end;
 
+  TScoreRecord = record
+    username: string;
+    score: integer;
+    end;
+
 var
   user: TUser;
   questions: array[1..MAXQ] of TQuestion;
   skor, nyawa: integer;
   menu: char;
+  f: text;
 
   // its for the ascii dont use crt for whtever reasons
   procedure ClearScreen;
@@ -30,6 +36,7 @@ var
     write(#27'[3J');  // clear scrollback (important)
     write(#27'[H');   // cursor to top-left
   end;
+
 
   function UsernameExists(const name: string): boolean;
   var
@@ -59,6 +66,7 @@ var
     close(f);
   end;
 
+
   function GetHighScore(const targetUser: string): integer;
   var
     f: text;
@@ -84,98 +92,19 @@ var
     GetHighScore := high;
   end;
 
-  type
-    TScoreRecord = record
-      username: string;
-      score: integer;
-      end;
 
-  procedure ShowTop5Scores;
-  var
-    f: text;
-    line, u, sstr: string;
-    posi, s, i, j: integer;
-    scores: array of TScoreRecord;
-    temp: TScoreRecord;
+  procedure SaveScore;
+  var f: text;
 
   begin
-    if not FileExists(DATASCORE) then
-      begin
-        writeln('Belum ada skor tersimpan.');
-        write('Tekan ');
-        SetGreen;
-        write('ENTER ');
-        ResetColor;
-        writeln('Untuk Kembali ke Menu Utama');
-        readln();
-        exit;
-      end;
-    // Baca semua skor
-    SetLength(scores, 0);
     assign(f, DATASCORE);
-    reset(f);
-    while not eof(f) do
-    begin
-      readln(f, line);
-      posi := pos(',', line);
-      if posi = 0 then continue;
-      u := copy(line, 1, posi - 1);
-      sstr := copy(line, posi + 1, length(line));
-      s := StrToIntDef(sstr, 0);
-      i := length(scores);
-      SetLength(scores, i + 1);
-      scores[i].username := u;
-      scores[i].score := s;
-    end;
+    if FileExists(DATASCORE) then
+      append(f)
+    else
+      rewrite(f);
+    writeln(f, user.username, ',', skor);
     close(f);
-
-    for i := 0 to length(scores) - 2 do
-      for j := i + 1 to length(scores) - 1 do
-        if scores[i].score < scores[j].score then
-        begin
-          temp := scores[i];
-          scores[i] := scores[j];
-          scores[j] := temp;
-        end;
-    
-    write('===== ');
-    SetBlue;
-    write('Top 5 Global Scores');
-    ResetColor;
-    writeln(' =====');
-  
-    //dynamic array starts from 0
-
-    for i := 0 to 4 do
-      begin 
-        if i < length(scores) then
-          begin
-            SetRed;
-            write(i+1);
-            ResetColor;
-            write( '. ');
-            SetBlue;
-            write(scores[i].username); 
-            ResetColor;
-            write(' : ');
-            SetMagenta;
-            writeln(scores[i].score);
-            ResetColor;
-          end
-        else
-          writeln(i+1, '. - : 0');
-      end;
-    writeln('===============================');
-    write('Tekan ');
-    SetGreen;
-    write('ENTER ');
-    ResetColor;
-    writeln('Untuk Kembali ke Menu Utama');
-    readln();
-    ClearScreen;
   end;
-
-
 
 
   procedure SignUp;
@@ -292,8 +221,10 @@ var
       begin
         a := Random(99) + 1;
         b := Random(99) + 1;
-        if Random(2) = 0 then a := -a;
-        if Random(2) = 0 then b := -b;
+        if Random(2) = 0 then
+          a := -a;
+        if Random(2) = 0 then
+          b := -b;
         hasil := a + b;
         range := 4;
         Q.soal := IntToStr(a) + ' + ' + IntToStr(b) + ' = ?';
@@ -303,8 +234,10 @@ var
       begin
         a := Random(33) + 1;
         b := Random(33) + 1;
-        if Random(2) = 0 then a := -a;
-        if Random(2) = 0 then b := -b;
+        if Random(2) = 0 then
+          a := -a;
+        if Random(2) = 0 then
+          b := -b;
         hasil := a * b;
         range := 24;
         Q.soal := IntToStr(a) + ' x ' + IntToStr(b) + ' = ?';
@@ -328,28 +261,29 @@ var
     for i := 1 to 4 do
       begin
         if not used[i] then
-        begin
-          repeat
-            val := hasil + (Random(range * 2 + 1) - range);
-            // same parity for + and ×
-            if op <> 3 then
-              if Odd(val) <> Odd(hasil) then
-                continue;
-            // not equal to correct answer
-            if val = hasil then
-              continue;
-            // prevent duplicate choices
-            if ( (used[1] and (Q.pilihan[1] = IntToStr(val))) or
-                (used[2] and (Q.pilihan[2] = IntToStr(val))) or
-                (used[3] and (Q.pilihan[3] = IntToStr(val))) or
-                (used[4] and (Q.pilihan[4] = IntToStr(val))) ) then
-              continue;
-            break;
-          until false;
+          begin
+            repeat
+              val := hasil + (Random(range * 2 + 1) - range);
 
-          Q.pilihan[i] := IntToStr(val);
-          used[i] := true;
-        end;
+              // same parity for + and ×
+              if op <> 3 then
+                if Odd(val) xor Odd(hasil) then
+                  continue;
+              
+              // not equal to correct answer
+              if val = hasil then
+                continue;
+              
+              // prevent duplicate choices
+              // in Monkee language, if the choice value generated at this point is present in one of the used posistion than it will repeat the val generation
+              if ((used[1] and (Q.pilihan[1] = IntToStr(val))) or (used[2] and (Q.pilihan[2] = IntToStr(val))) or (used[3] and (Q.pilihan[3] = IntToStr(val))) or (used[4] and (Q.pilihan[4] = IntToStr(val)))) then
+                continue;
+              break;
+            until false;
+
+            Q.pilihan[i] := IntToStr(val);
+            used[i] := true;
+          end;
       end;
   end;
 
@@ -360,20 +294,6 @@ var
   begin
     for i := 1 to MAXQ do
       GenerateRandomQuestion(questions[i]);
-  end;
-
-
-  procedure SaveScore;
-  var f: text;
-
-  begin
-    assign(f, DATASCORE);
-    if FileExists(DATASCORE) then
-      append(f)
-    else
-      rewrite(f);
-    writeln(f, user.username, ',', skor);
-    close(f);
   end;
 
 
@@ -399,7 +319,7 @@ var
           SetMagenta;
           write('1. ');
           SetBlue;
-          writeln( questions[i].pilihan[1]);
+          writeln(questions[i].pilihan[1]);
           SetMagenta;
           write('2. ');
           SetBlue;
@@ -487,12 +407,101 @@ var
     ClearScreen;
   end;
 
+
+  procedure ShowTop5Scores;
+  var
+    f: text;
+    line, u, sstr: string;
+    posi, s, i, j: integer;
+    scores: array of TScoreRecord;
+    temp: TScoreRecord;
+
+  begin
+    if not FileExists(DATASCORE) then
+      begin
+        writeln('Belum ada skor tersimpan.');
+        write('Tekan ');
+        SetGreen;
+        write('ENTER ');
+        ResetColor;
+        writeln('Untuk Kembali ke Menu Utama');
+        readln();
+        exit;
+      end;
+    // Baca semua skor
+    SetLength(scores, 0);
+    assign(f, DATASCORE);
+    reset(f);
+    while not eof(f) do
+    begin
+      readln(f, line);
+      posi := pos(',', line);
+      if posi = 0 then continue;
+      u := copy(line, 1, posi - 1);
+      sstr := copy(line, posi + 1, length(line));
+      s := StrToIntDef(sstr, 0);
+      i := length(scores);
+      // i buat bantu perbesar array
+      SetLength(scores, i + 1);
+      scores[i].username := u;
+      scores[i].score := s;
+    end;
+    close(f);
+
+    for i := 0 to length(scores) - 2 do
+      for j := i + 1 to length(scores) - 1 do
+        if scores[i].score < scores[j].score then
+        begin
+          temp := scores[i];
+          scores[i] := scores[j];
+          scores[j] := temp;
+        end;
+    
+    write('===== ');
+    SetBlue;
+    write('Top 5 Global Scores');
+    ResetColor;
+    writeln(' =====');
+  
+    //dynamic array starts from 0
+
+    for i := 0 to 4 do
+      begin 
+        if i < length(scores) then
+        // tindak pencegahan klo data yg ada blom ampe 5
+          begin
+            SetRed;
+            write(i+1);
+            ResetColor;
+            write('. ');
+            SetBlue;
+            write(scores[i].username); 
+            ResetColor;
+            write(' : ');
+            SetMagenta;
+            writeln(scores[i].score);
+            ResetColor;
+          end
+        else
+          writeln(i+1, '. - : 0');
+      end;
+    writeln('===============================');
+    write('Tekan ');
+    SetGreen;
+    write('ENTER ');
+    ResetColor;
+    writeln('Untuk Kembali ke Menu Utama');
+    readln();
+    ClearScreen;
+  end;
+
+
 begin
   if not FileExists(DATAUSER) then
   begin
-    assign(output, DATAUSER);
-    rewrite(output);
-    close(output);
+    assign(f, DATAUSER);
+    rewrite(f);
+    close(f);
   end;
 
   repeat
