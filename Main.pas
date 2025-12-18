@@ -463,7 +463,7 @@ var
     writeln(skor);
     writeln;
 
-    if skor >= 40 then
+    if skor >= 80 then
       writeln('Mantap! Kamu jago matematika!')
     else
       begin
