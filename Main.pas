@@ -54,7 +54,7 @@ var
     while not eof(f) do
     begin
       readln(f, line);
-      posi := pos(',', line);
+      posi := pos('|', line);
       if posi = 0 then continue;
       u := copy(line, 1, posi - 1);
       if u = name then
@@ -80,7 +80,7 @@ var
     while not eof(f) do
     begin
       readln(f, line);
-      posi := pos(',', line);
+      posi := pos('|', line);
       u := copy(line, 1, posi - 1);
       s := StrToInt(copy(line, posi + 1, length(line)));
 
@@ -102,7 +102,7 @@ var
       append(f)
     else
       rewrite(f);
-    writeln(f, user.username, ',', skor);
+    writeln(f, user.username, '|', skor);
     close(f);
   end;
 
@@ -135,7 +135,7 @@ var
     assign(f, DATAUSER);
     append(f);
     // buat pindah ke plg bawah file txt
-    writeln(f, user.username, ',', user.password);
+    writeln(f, user.username, '|', user.password);
     close(f);
     writeln('Sign up berhasil!');
     write('Tekan ');
@@ -183,7 +183,7 @@ var
     while not eof(f) do
     begin
       readln(f, line);
-      posi := pos(',', line);
+      posi := pos('|', line);
       u := copy(line, 1, posi - 1);
       p := copy(line, posi + 1, length(line));
 
@@ -345,7 +345,7 @@ var
               ResetColor;
               skor := skor + 10;
             end
-            else
+          else
             begin
               SetRed;
               writeln('Salah!');
@@ -435,7 +435,7 @@ var
     while not eof(f) do
     begin
       readln(f, line);
-      posi := pos(',', line);
+      posi := pos('|', line);
       if posi = 0 then continue;
       u := copy(line, 1, posi - 1);
       sstr := copy(line, posi + 1, length(line));

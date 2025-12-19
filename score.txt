@@ -1,2 +1,3 @@
-ferfer,90
-fernandezganteng,0
+ferfer|90
+fernandezganteng|0
+fernandezganteng123|80

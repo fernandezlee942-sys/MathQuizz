@@ -1,2 +1,3 @@
-ferfer,123
-fernandezganteng,ganteng
+ferfer|123
+fernandezganteng|ganteng
+fernandezganteng123|23
