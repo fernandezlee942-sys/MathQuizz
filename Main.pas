@@ -332,26 +332,38 @@ var
           write('4. ');
           SetBlue;
           writeln(questions[i].pilihan[4]);
+          repeat
           ResetColor;
           write('Jawaban (1-4): ');
           SetMagenta;
-          readln(pilih);
-          ResetColor;
+            readln(pilih);
+            ResetColor;
 
-          if pilih = questions[i].jawaban then
-            begin
-              SetGreen;
-              writeln('Benar!');
-              ResetColor;
-              skor := skor + 10;
-            end
-          else
-            begin
-              SetRed;
-              writeln('Salah!');
-              ResetColor;
-              nyawa := nyawa - 1;
-            end;
+            if ((pilih<1) or (pilih>4)) then
+              begin
+                SetRed;
+                writeln('Pilihan harus diantara 1-4!');
+                ResetColor;
+              end
+
+          until ((pilih >=1) and (pilih<=4));
+
+            // rather than deducing the live of wrong input, we looped the whole process and for why we use the until not at the end of if else is just for safety measures 
+            if pilih = questions[i].jawaban then
+              begin
+                SetGreen;
+                writeln('Benar!');
+                ResetColor;
+                skor := skor + 10;
+              end
+            else
+             begin
+                SetRed;
+                writeln('Salah!');
+                ResetColor;
+                nyawa := nyawa - 1;
+              end;  
+       
 
           if nyawa = 0 then 
             break;
